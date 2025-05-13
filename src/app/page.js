@@ -1,7 +1,9 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+
+import { LineChart, Line, CartesianGrid, ResponsiveContainer } from "recharts";
 
 import { API_URL } from "./libs/global";
 
@@ -14,6 +16,7 @@ import Flower from "@/app/assets/flower.png";
 
 import Login from "@/app/Login/page";
 import Firstimepassreset from "@/app/Firsttimepass/page";
+import Terms from "@/app/Terms/page";
 
 import "@/app/globals.css";
 
@@ -46,9 +49,13 @@ export default function Home() {
     return size;
   };
 
+  const [userinfo, setuserinfo] = useState([]);
+
   const { width, height } = useWindowSize();
 
   const [userData, setUserData] = useState(null);
+
+  const [selectedLeg, setSelectedLeg] = useState("left");
 
   const today = new Date().toLocaleDateString("en-US", {
     month: "long", // "April"
@@ -106,9 +113,9 @@ export default function Home() {
   const [isOpen, setIsOpen] = useState(true);
 
   const [passopen, setpassopen] = useState(false);
+  const [termsopen, setTermsopen] = useState(false);
 
-
-  const mapQuestionnaireData = (assignedList) => {
+  const mapQuestionnaireData = (assignedList, leg) => {
     return assignedList.map((item) => {
       const name = item.name.toLowerCase();
       let questions = 0;
@@ -140,33 +147,56 @@ export default function Home() {
         duration: duration,
         assigned_date: item.assigned_date,
         deadline: item.deadline,
+        leg: leg, // <-- Added leg here
       };
     });
   };
 
+  useEffect(() => {
+    const tempData = [];
+
+    if (userData?.user?.questionnaire_assigned_left) {
+      const mappedLeft = mapQuestionnaireData(
+        userData.user.questionnaire_assigned_left,
+        "Left"
+      );
+      tempData.push(...mappedLeft);
+    }
+    if (userData?.user?.questionnaire_assigned_right) {
+      const mappedRight = mapQuestionnaireData(
+        userData.user.questionnaire_assigned_right,
+        "Right"
+      );
+      tempData.push(...mappedRight);
+    }
+
+    setTransformedData(tempData); // <-- THIS IS THE KEY!
+  }, [userData]);
+
   const handleUserData = (data) => {
     setUserData(data);
+    setpatientdata(data.user);
   };
 
-  useEffect(() => {
-    if (userData?.user?.questionnaire_assigned) {
-      const mapped = mapQuestionnaireData(userData.user.questionnaire_assigned);
-      setTransformedData(mapped);
-    }
-    console.log("Patient Data", userData);
-  }, [userData]);
+  const [patientdata, setpatientdata] = useState();
 
   useEffect(() => {
     const uhid = sessionStorage.getItem("uhid");
     const password = sessionStorage.getItem("password");
 
+    const userin = sessionStorage.getItem("userinfo");
+    if (userin) {
+      const parsedUser = JSON.parse(userin); // Parse the string to an actual object
+      console.log("User Info", parsedUser);
+    } else {
+      console.log("No user info found in sessionStorage.");
+    }
+
     if (password === "patient@123") {
-      setpassopen(true);
+      setTermsopen(true);
     }
     // If userData already exists, don't fetch again
     if (userData && userData.user) return;
-
-    
 
     if (uhid && password) {
       setIsOpen(false);
@@ -188,13 +218,14 @@ export default function Home() {
     }
   }, [userData]);
 
-  const handlequestionnaireclick = (title, period) => {
-    console.log("Questionnaire Data", transformedData); // log the mapped value here
-    console.log("Selected Questionnaire:", title);
-    console.log("Period:", period);
+  const handlequestionnaireclick = (title, period, leg) => {
+    // console.log("Questionnaire Data", transformedData); // log the mapped value here
+    // console.log("Selected Questionnaire:", title);
+    // console.log("Period:", period);
     if (typeof window !== "undefined") {
       sessionStorage.setItem("questionnaire_title", title);
       sessionStorage.setItem("questionnaire_period", period);
+      sessionStorage.setItem("questionnaire_leg", leg);
       sessionStorage.setItem("uhid", userData.user.uhid);
       sessionStorage.setItem(
         "name",
@@ -205,8 +236,102 @@ export default function Home() {
     router.push("/Questionnaire");
   };
 
+  const data = [
+    { value: 10 },
+    { value: 30 },
+    { value: 20 },
+    { value: 50 },
+    { value: 40 },
+  ];
 
+  const normalizePeriod = (period) =>
+    period.trim().toUpperCase().replace(/\s+/g, "");
 
+  const getScoreByPeriodAndType = (scores, period, type) => {
+    const match = scores.find(
+      (s) =>
+        normalizePeriod(s.period) === normalizePeriod(period) &&
+        s.name.toLowerCase().includes(type.toLowerCase())
+    );
+    return match ? match.score[0] : null;
+  };
+
+  const generateChartData = (patient) => {
+    const scores =
+      selectedLeg === "left"
+        ? patient?.questionnaire_scores_left || []
+        : patient?.questionnaire_scores_right || [];
+
+    const periodMap = {
+      "-3": "PRE OP",
+      "3W": "3W", // 👈 Add this
+      SURGERY: "SURGERY",
+      "+42": "6W",
+      "+90": "3M",
+      "+180": "6M",
+      "+365": "1Y",
+      "+730": "2Y",
+    };
+
+    const timeOrder = {
+      "-3": -3,
+      "3W": 21, // 👈 Approximate 3 weeks in days
+      SURGERY: 10,
+      "+42": 42,
+      "+90": 90,
+      "+180": 180,
+      "+365": 365,
+      "+730": 730,
+    };
+
+    // Check if a period exists in the questionnaire_scores
+    const hasPeriodData = (periodKey) => {
+      return scores.some(
+        (s) =>
+          normalizePeriod(s.period) === normalizePeriod(periodMap[periodKey])
+      );
+    };
+
+    // Always include surgery, include others only if data exists
+    const periods = Object.keys(periodMap).filter(
+      (key) => key === "SURGERY" || hasPeriodData(key)
+    );
+
+    const chartData = periods.map((label) => {
+      const periodKey = periodMap[label];
+
+      return {
+        name: periodKey,
+        oks:
+          label === "SURGERY"
+            ? undefined
+            : getScoreByPeriodAndType(scores, periodKey, "Oxford Knee Score"),
+        sf12:
+          label === "SURGERY"
+            ? undefined
+            : getScoreByPeriodAndType(scores, periodKey, "SF-12"),
+        koos:
+          label === "SURGERY"
+            ? undefined
+            : getScoreByPeriodAndType(scores, periodKey, "KOOS"),
+        kss:
+          label === "SURGERY"
+            ? undefined
+            : getScoreByPeriodAndType(scores, periodKey, "KSS"),
+        fjs:
+          label === "SURGERY"
+            ? undefined
+            : getScoreByPeriodAndType(scores, periodKey, "FJS"),
+        _order: timeOrder[label],
+      };
+    });
+
+    return chartData
+      .sort((a, b) => a._order - b._order)
+      .map(({ _order, ...rest }) => rest);
+  };
+
+  const graphdata = patientdata ? generateChartData(patientdata) : [];
 
   return (
     <>
@@ -259,7 +384,7 @@ export default function Home() {
                   width < 750 ? "text-center" : ""
                 }`}
               >
-                A compelete questionnaire section
+                A complete questionnaire section
               </p>
             </div>
           </div>
@@ -274,86 +399,189 @@ export default function Home() {
         </div>
 
         <div
-          className={`w-full ${
-            width < 600 ? "h-full" : "overflow-x-auto  h-[70%] "
+          className={`w-full flex ${
+            width < 600 ? "h-full  flex-col" : " flex-row  h-[70%] "
           }`}
         >
           <div
-            className={`${
-              width < 600 ? "flex-col mx-auto" : "flex-row"
-            } flex gap-4 w-max`}
+            className={`flex ${
+              width < 600
+                ? "justify-center w-full flex-col"
+                : " overflow-y-auto w-3/5"
+            } gap-4 p-4`}
           >
-            {transformedData.map((item, index) => (
-              <div
-                key={index}
-                className={` h-[350px] bg-white rounded-2xl flex flex-col p-6 shadow-2xl gap-5 ${
-                  item.status === "Pending"
-                    ? "cursor-pointer"
-                    : "cursor-default"
-                } ${
-                  width < 350
-                    ? "w-full"
-                    : width < 600
-                    ? "w-[350px]"
-                    : "w-[350px]"
+            {[...transformedData]
+              .sort((a, b) => {
+                if (a.status === "Pending" && b.status !== "Pending") return -1;
+                if (a.status !== "Pending" && b.status === "Pending") return 1;
+                return 0;
+              })
+              .map((item, index) => (
+                <div
+                  key={index}
+                  className={` bg-white rounded-2xl flex flex-col p-6 shadow-2xl gap-5 ${
+                    item.status === "Pending"
+                      ? "cursor-pointer"
+                      : "cursor-default"
+                  } ${width < 600 ? "w-full" : "min-w-[350px]"}`}
+                  onClick={() =>
+                    item.status === "Pending" &&
+                    handlequestionnaireclick(item.title, item.period, item.leg)
+                  }
+                >
+                  {/* Card content */}
+                  <div className="w-full h-[15%] flex justify-between items-center">
+                    <p
+                      className={`font-bold text-lg ${
+                        item.leg === "Left" ? "text-blue-500" : "text-green-500"
+                      }`}
+                    >
+                      {item.leg} Leg
+                    </p>
+                    <p
+                      className={`text-white font-normal text-base rounded-2xl px-3 py-1 ${
+                        item.status === "Pending"
+                          ? "bg-[#FF4C4C]"
+                          : "bg-[#199855]"
+                      }`}
+                    >
+                      {item.status}
+                    </p>
+                  </div>
+
+                  <div className="w-full flex-1 flex flex-col justify-start">
+                    <p className="font-normal text-[16px] text-[#3B3B3B]">
+                      Period: {item.period}
+                    </p>
+                    <p className="font-semibold text-[20px] text-[#1E1E1E]">
+                      {item.title}
+                    </p>
+                  </div>
+
+                  <div className="w-full flex flex-row justify-between items-center">
+                    <div className="flex flex-col items-center">
+                      <p className="font-normal text-[15px] text-[#3C3C3C]">
+                        Questions
+                      </p>
+                      <p className="font-semibold text-[16px] text-black">
+                        {item.questions}
+                      </p>
+                    </div>
+                    <div className="flex flex-col items-center">
+                      <p className="font-normal text-[15px] text-[#3C3C3C]">
+                        Deadline
+                      </p>
+                      <p className="font-semibold text-[16px] text-black">
+                        {new Date(item.deadline).toLocaleString("en-IN", {
+                          timeZone: "Asia/Kolkata",
+                          day: "numeric",
+                          month: "long",
+                          year: "numeric",
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+          </div>
+          <div
+            className={`flex ${
+              width < 600 ? "flex-col mx-auto w-full" : "flex-col w-2/5"
+            } gap-2 p-4`}
+          >
+            <h2 className="text-xl font-bold text-center mb-2 text-[#1E1E1E]">
+              Your Performance
+            </h2>
+            <div className="flex justify-center gap-2">
+              <button
+                onClick={() => setSelectedLeg("left")}
+                className={`px-4 py-0.5 rounded-full font-semibold text-sm cursor-pointer ${
+                  selectedLeg === "left"
+                    ? "bg-[#005585] text-white"
+                    : "bg-gray-300 text-black"
                 }`}
-                onClick={() =>
-                  item.status === "Pending" &&
-                  handlequestionnaireclick(item.title, item.period)
-                }
               >
-                <div className="w-full h-[15%] flex justify-end items-center">
-                  <p
-                    className={`text-white font-normal text-base rounded-2xl px-3 py-1 ${
-                      item.status === "Pending"
-                        ? "bg-[#FF4C4C]"
-                        : "bg-[#199855]"
-                    }`}
-                  >
-                    {item.status}
-                  </p>
-                </div>
-                <div className="w-full h-[50%] flex justify-start flex-col">
-                  <p className="font-normal text-[16px] text-[#3B3B3B]">
-                    Period: {item.period}
-                  </p>
-                  <p className="font-semibold text-[20px] text-[#1E1E1E]">
-                    {item.title}
-                  </p>
-                </div>
-                <div className="w-full h-[35%] flex items-center flex-row justify-start">
-                  <div className="w-1/3 h-full flex flex-col items-center justify-between">
-                    <p className="font-normal text-[15px] text-[#3C3C3C] text-center">
-                      No. of Questions
-                    </p>
-                    <p className="font-semibold text-[16px] text-black text-center">
-                      {item.questions}
-                    </p>
-                  </div>
-                  <div className="w-1/3 h-full flex flex-col items-center justify-between">
-                    <p className="font-normal text-[15px] text-[#3C3C3C] text-center">
-                      Duration
-                    </p>
-                    <p className="font-semibold text-[16px] text-black text-center">
-                      {item.duration}
-                    </p>
-                  </div>
-                  <div className="w-1/3 h-full flex flex-col items-center justify-between">
-                    <p className="font-normal text-[15px] text-[#3C3C3C] text-center">
-                      Deadline
-                    </p>
-                    <p className="font-semibold text-[16px] text-black text-center">
-                      {new Date(item.deadline).toLocaleString("en-IN", {
-                        timeZone: "Asia/Kolkata",
-                        day: "numeric",
-                        month: "long",
-                        year: "numeric",
-                      })}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
+                Left
+              </button>
+              <button
+                onClick={() => setSelectedLeg("right")}
+                className={`px-4 py-0.5 rounded-full font-semibold text-sm cursor-pointer ${
+                  selectedLeg === "right"
+                    ? "bg-[#005585] text-white"
+                    : "bg-gray-300 text-black"
+                }`}
+              >
+                Right
+              </button>
+            </div>
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={graphdata}>
+                {/* Hide X-axis */}
+                <CartesianGrid strokeDasharray="3 3" />
+                {["oks", "sf12", "koos", "kss", "fjs"].map((key, i) => {
+                  const colors = [
+                    "#4F46E5", // Indigo
+                    "#A855F7", // Purple
+                    "#10B981", // Emerald
+                    "#F97316", // Orange
+                    "#3B82F6", // Blue
+                  ];
+
+                  const labels = {
+                    oks: "Oxford Knee Score",
+                    sf12: "Short Form - 12",
+                    koos: "KOOS",
+                    kss: "Knee Society Score",
+                    fjs: "Forgotten Joint Score",
+                  };
+
+                  return (
+                    <Line
+                      key={key}
+                      type="monotone"
+                      dataKey={key}
+                      connectNulls={true} // Continue connecting lines even when there's no data
+                      name={labels[key]}
+                      stroke={colors[i]}
+                      strokeWidth={2}
+                      dot={({ cx, cy, payload, index }) => {
+                        // Check if the value exists before rendering the dot
+                        if (payload[key] == null || payload[key] === 0) {
+                          return null; // Don't render the dot if there's no data
+                        }
+
+                        return (
+                          <circle
+                            key={`dot-${index}`} // Ensure unique key
+                            cx={cx}
+                            cy={cy}
+                            r={3}
+                            stroke={colors[i]}
+                            strokeWidth={1}
+                            fill={colors[i]}
+                          />
+                        );
+                      }}
+                      activeDot={({ payload }) => {
+                        // Only show active dot if there's data
+                        if (payload[key] == null || payload[key] === 0) {
+                          return null; // Don't render active dot if there's no data
+                        }
+
+                        return (
+                          <circle
+                            r={6}
+                            stroke="black"
+                            strokeWidth={2}
+                            fill="white"
+                          />
+                        );
+                      }}
+                    />
+                  );
+                })}
+              </LineChart>
+            </ResponsiveContainer>
           </div>
         </div>
 
@@ -369,6 +597,13 @@ export default function Home() {
       <Firstimepassreset
         passopen={passopen}
         onClose={() => setpassopen(false)}
+      />
+      <Terms
+        isTermsopen={termsopen}
+        isTermsclose={() => {
+          setTermsopen(false);
+          setpassopen(true);
+        }}
       />
     </>
   );
