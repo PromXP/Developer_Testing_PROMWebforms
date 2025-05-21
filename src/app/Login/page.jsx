@@ -12,6 +12,7 @@ import { Poppins } from "next/font/google";
 import Human from "@/app/assets/student.png";
 import Flower from "@/app/assets/flower.png";
 import Closeicon from "@/app/assets/closeicon.png";
+import LoginBg from "@/app/assets/login.jpg";
 
 import "@/app/globals.css";
 
@@ -81,7 +82,7 @@ const page = ({ isOpen, onClose, userDatasend }) => {
 
       onClose();
     } catch (err) {
-      alert("Login failed. Please check your credentials.");
+      showWarning("Login failed. Please check your credentials.");
       console.error("POST error:", err);
     }
   };
@@ -102,7 +103,7 @@ const page = ({ isOpen, onClose, userDatasend }) => {
   const [resetEmail, setResetEmail] = useState("");
 
   const handleForgotPassword = async () => {
-     if (!userUHID) {
+    if (!userUHID) {
       showWarning("Please enter your UHID");
       setshowAlert(true);
       setTimeout(() => setshowAlert(false), 3000);
@@ -114,7 +115,6 @@ const page = ({ isOpen, onClose, userDatasend }) => {
       setTimeout(() => setshowAlert(false), 3000);
       return;
     }
-   
 
     try {
       const response = await axios.post(
@@ -127,31 +127,35 @@ const page = ({ isOpen, onClose, userDatasend }) => {
 
       if (response.ok) {
         showWarning("Reset link sent to your email.");
-      } else {
-        showWarning(data.message || "Failed to send reset link.");
-      }
+      } 
+      // else {
+      //   showWarning(data.message || "Failed to send reset link.");
+      // }
     } catch (error) {
-      console.log("Error reset",error);
-      showWarning("Something went wrong. Please try again.");
+      console.log("Error reset", error);
+      showWarning("Entered credentials are incorrect Check your credentials");
     }
 
     setshowAlert(true);
     setTimeout(() => setshowAlert(false), 3000);
   };
 
-  
-
   if (!isOpen) return null;
 
   return (
     <div
-      className="fixed inset-0 z-40"
-      style={{
-        backgroundColor: "rgba(0, 0, 0, 0.7)",
-      }}
+      className="fixed inset-0 z-40 w-full h-full"
+      
     >
+       <Image
+    src={LoginBg}
+    alt="Background"
+    layout="fill" // fills the container
+    objectFit="cover" // makes it behave like a background
+    priority
+  />
       <div
-        className={`min-h-screen w-fit flex flex-col items-center justify-center mx-auto ${
+        className={`min-h-screen w-fit flex flex-col items-center justify-center mx-auto z-10 relative ${
           width < 950 ? "p-4 gap-4" : "p-4"
         }`}
       >
