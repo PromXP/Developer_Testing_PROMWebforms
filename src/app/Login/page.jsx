@@ -127,7 +127,7 @@ const page = ({ isOpen, onClose, userDatasend }) => {
 
       if (response.ok) {
         showWarning("Reset link sent to your email.");
-      } 
+      }
       // else {
       //   showWarning(data.message || "Failed to send reset link.");
       // }
@@ -143,17 +143,14 @@ const page = ({ isOpen, onClose, userDatasend }) => {
   if (!isOpen) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-40 w-full h-full"
-      
-    >
-       <Image
-    src={LoginBg}
-    alt="Background"
-    layout="fill" // fills the container
-    objectFit="cover" // makes it behave like a background
-    priority
-  />
+    <div className="fixed inset-0 z-40 w-full h-full">
+      <Image
+        src={LoginBg}
+        alt="Background"
+        layout="fill" // fills the container
+        objectFit="cover" // makes it behave like a background
+        priority
+      />
       <div
         className={`min-h-screen w-fit flex flex-col items-center justify-center mx-auto z-10 relative ${
           width < 950 ? "p-4 gap-4" : "p-4"
