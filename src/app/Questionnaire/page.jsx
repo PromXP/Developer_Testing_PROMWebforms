@@ -1309,7 +1309,7 @@ const page = () => {
                   className={` font-bold text-base text-black flex items-center ${
                     width < 850
                       ? "w-full h-fit justify-center"
-                      : "w-[45%] h-full "
+                      : "w-[95%] h-full "
                   }`}
                 >
                   {questionnaireTitle}
