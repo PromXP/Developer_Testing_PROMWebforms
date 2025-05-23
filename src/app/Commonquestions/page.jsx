@@ -33,6 +33,27 @@ const page = ({ isOpen, onClose, onSubmit }) => {
   const [painDetails, setPainDetails] = useState("");
 
   const handleSubmit = () => {
+    // Basic validation
+    if (!filledBy) {
+      showWarning("Please select who filled the form.");
+      return;
+    }
+
+    if (filledBy === "Other" && !whoFilled.trim()) {
+      showWarning("Please specify who filled the form.");
+      return;
+    }
+
+    if (!otherPain) {
+      showWarning("Please select if there is any pain.");
+      return;
+    }
+
+    if (otherPain === "Yes" && !painDetails.trim()) {
+      showWarning("Please provide pain details.");
+      return;
+    }
+
     onSubmit({
       filledBy,
       whoFilled: filledBy === "Other" ? whoFilled : "",
@@ -40,6 +61,15 @@ const page = ({ isOpen, onClose, onSubmit }) => {
       painDetails: otherPain === "Yes" ? painDetails : "",
     });
     onClose();
+  };
+
+   const [showAlert, setshowAlert] = useState(false);
+      const [alermessage, setAlertMessage] = useState("");
+
+  const showWarning = (message) => {
+    setAlertMessage(message);
+    setshowAlert(true);
+    setTimeout(() => setshowAlert(false), 4000);
   };
 
   if (!isOpen) return null;
@@ -115,6 +145,15 @@ const page = ({ isOpen, onClose, onSubmit }) => {
           </button>
         </div>
       </div>
+
+      {/* Alert */}
+      {showAlert && (
+        <div className="fixed top-8 left-1/2 transform -translate-x-1/2 z-50">
+          <div className="bg-yellow-100 border border-yellow-400 text-yellow-800 px-6 py-3 rounded-lg shadow-lg animate-fade-in-out">
+            {alermessage}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

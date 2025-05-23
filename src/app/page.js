@@ -3,7 +3,13 @@ import React, { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 
-import { LineChart, Line, CartesianGrid, ResponsiveContainer } from "recharts";
+import {
+  LineChart,
+  Line,
+  CartesianGrid,
+  ResponsiveContainer,
+  XAxis,
+} from "recharts";
 
 import { API_URL } from "./libs/global";
 
@@ -13,6 +19,7 @@ import { Poppins } from "next/font/google";
 
 import Human from "@/app/assets/student.png";
 import Flower from "@/app/assets/flower.png";
+import Logout from "@/app/assets/logout.png";
 
 import Login from "@/app/Login/page";
 import Firstimepassreset from "@/app/Firsttimepass/page";
@@ -379,13 +386,19 @@ export default function Home() {
                     userData?.user?.last_name || "User"}
                 </p>
               </div>
-              <p
-                className={`font-normal text-base text-white ${
-                  width < 750 ? "text-center" : ""
-                }`}
+              <div
+                className={`w-full flex flex-row gap-8 items-center`}
               >
-                A complete questionnaire section
-              </p>
+                <p
+                  className={`font-normal text-base text-white ${
+                    width < 750 ? "text-center" : ""
+                  }`}
+                >
+                  A complete questionnaire section
+                </p>
+
+                <Image src={Logout} alt="logout" className="w-8 h-8 cursor-pointer" onClick={()=>{sessionStorage.clear();setIsOpen(true)}}/>
+              </div>
             </div>
           </div>
 
@@ -518,6 +531,11 @@ export default function Home() {
               <LineChart data={graphdata}>
                 {/* Hide X-axis */}
                 <CartesianGrid strokeDasharray="3 3" />
+                <XAxis
+                  dataKey="name" // Replace with your actual X-axis field (e.g., "x", "label", etc.)
+                  tick={{ fontSize: 12 }}
+                  textAnchor="end"
+                />
                 {["oks", "sf12", "koos", "kss", "fjs"].map((key, i) => {
                   const colors = [
                     "#4F46E5", // Indigo
@@ -585,7 +603,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="absolute bottom-0 left-4">
+        <div className="absolute bottom-0 left-4 z-0 pointer-events-none">
           <Image src={Flower} alt="flower" className="w-32 h-32" />
         </div>
       </div>

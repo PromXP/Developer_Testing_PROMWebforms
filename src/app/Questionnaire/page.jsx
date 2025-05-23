@@ -1049,8 +1049,7 @@ const page = () => {
           name: questionnaireTitle, // same as HomeFragment.selectedquestionnaire
           period: questionnairePeriod, // same as HomeFragment.quesperiod
           completed: cmp,
-          leg: leg.toLowerCase()
-
+          leg: leg.toLowerCase(),
         };
 
         setIsSubmitting(false);
@@ -1064,7 +1063,7 @@ const page = () => {
         );
 
         console.log("PUT Response (status):", response.data);
-        alert("✅ Questionnaire Submitted Successfully!");
+        showWarning("✅ Questionnaire Submitted Successfully!");
       } catch (error) {
         console.error("PUT Error (status):", error);
         // alert("❌ Failed to update questionnaire status.");
@@ -1268,6 +1267,15 @@ const page = () => {
     setPopupOpen(true);
   };
 
+  const [showAlert, setshowAlert] = useState(false);
+  const [alermessage, setAlertMessage] = useState("");
+
+  const showWarning = (message) => {
+    setAlertMessage(message);
+    setshowAlert(true);
+    setTimeout(() => setshowAlert(false), 4000);
+  };
+
   return (
     <>
       <div className="relative">
@@ -1292,15 +1300,31 @@ const page = () => {
                   : "flex-row h-[95%] justify-between py-[20px]"
               }`}
             >
-              <p
-                className={` font-bold text-base text-black flex items-center ${
-                  width < 850
-                    ? "w-full h-fit justify-center"
-                    : "w-[45%] h-full "
+              <div
+                className={`h-full flex flex-col font-bold text-sm text-[#545454] ${
+                  width < 850 ? "w-full gap-2" : "w-[45%]"
                 }`}
               >
-                {questionnaireTitle}
-              </p>
+                <p
+                  className={` font-bold text-base text-black flex items-center ${
+                    width < 850
+                      ? "w-full h-fit justify-center"
+                      : "w-[45%] h-full "
+                  }`}
+                >
+                  {questionnaireTitle}
+                </p>
+                <p
+                  className={` font-bold text-base text-black flex items-center ${
+                    width < 850
+                      ? "w-full h-fit justify-center"
+                      : "w-[45%] h-full "
+                  }`}
+                >
+                  {questionnairePeriod} | {leg} Leg
+                </p>
+              </div>
+
               <div
                 className={`w-[5%]  flex justify-center items-center ${
                   width < 850 ? "h-fit" : "h-full"
@@ -1585,6 +1609,15 @@ const page = () => {
         onSubmit={handlePopupSubmit}
       />
       {showInitialPopup && <Timepopup onProceed={handleProceed} />}
+
+      {/* Alert */}
+      {showAlert && (
+        <div className="fixed top-8 left-1/2 transform -translate-x-1/2 z-50">
+          <div className="bg-yellow-100 border border-yellow-400 text-yellow-800 px-6 py-3 rounded-lg shadow-lg animate-fade-in-out">
+            {alermessage}
+          </div>
+        </div>
+      )}
     </>
   );
 };
