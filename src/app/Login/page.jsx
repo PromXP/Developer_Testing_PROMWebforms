@@ -181,7 +181,7 @@ const page = ({ isOpen, onClose, userDatasend }) => {
                     }`}
                   >
                     <p className="font-bold text-5 text-black">
-                      ENTER UHID / MOBILE NO / EMAIL
+                      MOBILE NO / EMAIL
                     </p>
                   </div>
 
