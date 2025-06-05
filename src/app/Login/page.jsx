@@ -181,14 +181,14 @@ const page = ({ isOpen, onClose, userDatasend }) => {
                     }`}
                   >
                     <p className="font-bold text-5 text-black">
-                      MOBILE NO / EMAIL
+                      ENTER UHID / MOBILE NO
                     </p>
                   </div>
 
                   {/* Common Input */}
                   <div className="w-full flex flex-col gap-2">
                     <input
-                      placeholder="UHID / MOBILE / EMAIL"
+                      placeholder="UHID / MOBILE"
                       rows={3}
                       className="w-full text-black px-4 py-2 text-sm rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       style={{ backgroundColor: "rgba(71, 84, 103, 0.1)" }}
