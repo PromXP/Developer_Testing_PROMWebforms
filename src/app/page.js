@@ -20,6 +20,7 @@ import { Poppins } from "next/font/google";
 import Human from "@/app/assets/student.png";
 import Flower from "@/app/assets/flower.png";
 import Logout from "@/app/assets/logout.png";
+import CloseIcon from "@/app/assets/closeicon.png";
 
 import Login from "@/app/Login/page";
 import Firstimepassreset from "@/app/Firsttimepass/page";
@@ -340,6 +341,12 @@ export default function Home() {
 
   const graphdata = patientdata ? generateChartData(patientdata) : [];
 
+  const [performshow, setPerformshow] = useState(false);
+
+  const handlePerform = () => {
+    setPerformshow(!performshow);
+  };
+
   return (
     <>
       <div
@@ -386,9 +393,7 @@ export default function Home() {
                     userData?.user?.last_name || "User"}
                 </p>
               </div>
-              <div
-                className={`w-full flex flex-row gap-8 items-center`}
-              >
+              <div className={`w-full flex flex-row gap-8 items-center`}>
                 <p
                   className={`font-normal text-base text-white ${
                     width < 750 ? "text-center" : ""
@@ -397,16 +402,33 @@ export default function Home() {
                   A complete questionnaire section
                 </p>
 
-                <Image src={Logout} alt="logout" className="w-8 h-8 cursor-pointer" onClick={()=>{sessionStorage.clear();setIsOpen(true)}}/>
+                <Image
+                  src={Logout}
+                  alt="logout"
+                  className="w-8 h-8 cursor-pointer"
+                  onClick={() => {
+                    sessionStorage.clear();
+                    setIsOpen(true);
+                  }}
+                />
               </div>
             </div>
           </div>
 
           <div
             className={`w-1/2 h-full flex  ${
-              width < 750 ? "justify-center" : "justify-end"
+              width < 750 ? "justify-center" : "justify-between items-center"
             }`}
           >
+            <div>
+              <button
+                className="bg-[#005585] text-white px-6 py-2 rounded-full shadow-md hover:bg-[#004466] transition duration-300 cursor-pointer"
+                onClick={handlePerform}
+              >
+                Your Performance
+              </button>
+            </div>
+
             <Image src={Human} alt="human" className="w-[300px] h-full" />
           </div>
         </div>
@@ -420,7 +442,7 @@ export default function Home() {
             className={`flex ${
               width < 600
                 ? "justify-center w-full flex-col"
-                : " overflow-y-auto w-3/5"
+                : " overflow-y-auto w-full"
             } gap-4 p-4`}
           >
             {[...transformedData]
@@ -497,115 +519,145 @@ export default function Home() {
                 </div>
               ))}
           </div>
-          <div
-            className={`flex ${
-              width < 600 ? "flex-col mx-auto w-full" : "flex-col w-2/5"
-            } gap-2 p-4`}
-          >
-            <h2 className="text-xl font-bold text-center mb-2 text-[#1E1E1E]">
-              Your Performance
-            </h2>
-            <div className="flex justify-center gap-2">
-              <button
-                onClick={() => setSelectedLeg("left")}
-                className={`px-4 py-0.5 rounded-full font-semibold text-sm cursor-pointer ${
-                  selectedLeg === "left"
-                    ? "bg-[#005585] text-white"
-                    : "bg-gray-300 text-black"
-                }`}
-              >
-                Left
-              </button>
-              <button
-                onClick={() => setSelectedLeg("right")}
-                className={`px-4 py-0.5 rounded-full font-semibold text-sm cursor-pointer ${
-                  selectedLeg === "right"
-                    ? "bg-[#005585] text-white"
-                    : "bg-gray-300 text-black"
-                }`}
-              >
-                Right
-              </button>
-            </div>
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={graphdata}>
-                {/* Hide X-axis */}
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis
-                  dataKey="name" // Replace with your actual X-axis field (e.g., "x", "label", etc.)
-                  tick={{ fontSize: 12 }}
-                  textAnchor="end"
-                />
-                {["oks", "sf12", "koos", "kss", "fjs"].map((key, i) => {
-                  const colors = [
-                    "#4F46E5", // Indigo
-                    "#A855F7", // Purple
-                    "#10B981", // Emerald
-                    "#F97316", // Orange
-                    "#3B82F6", // Blue
-                  ];
-
-                  const labels = {
-                    oks: "Oxford Knee Score",
-                    sf12: "Short Form - 12",
-                    koos: "KOOS",
-                    kss: "Knee Society Score",
-                    fjs: "Forgotten Joint Score",
-                  };
-
-                  return (
-                    <Line
-                      key={key}
-                      type="monotone"
-                      dataKey={key}
-                      connectNulls={true} // Continue connecting lines even when there's no data
-                      name={labels[key]}
-                      stroke={colors[i]}
-                      strokeWidth={2}
-                      dot={({ cx, cy, payload, index }) => {
-                        // Check if the value exists before rendering the dot
-                        if (payload[key] == null || payload[key] === 0) {
-                          return null; // Don't render the dot if there's no data
-                        }
-
-                        return (
-                          <circle
-                            key={`dot-${index}`} // Ensure unique key
-                            cx={cx}
-                            cy={cy}
-                            r={3}
-                            stroke={colors[i]}
-                            strokeWidth={1}
-                            fill={colors[i]}
-                          />
-                        );
-                      }}
-                      activeDot={({ payload }) => {
-                        // Only show active dot if there's data
-                        if (payload[key] == null || payload[key] === 0) {
-                          return null; // Don't render active dot if there's no data
-                        }
-
-                        return (
-                          <circle
-                            r={6}
-                            stroke="black"
-                            strokeWidth={2}
-                            fill="white"
-                          />
-                        );
-                      }}
-                    />
-                  );
-                })}
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
         </div>
 
         <div className="absolute bottom-0 left-4 z-0 pointer-events-none">
           <Image src={Flower} alt="flower" className="w-32 h-32" />
         </div>
+
+        {performshow && (
+          <div
+            className="fixed inset-0 z-40 w-full h-full"
+            style={{
+              backgroundColor: "rgba(0, 0, 0, 0.7)", // white with 50% opacity
+            }}
+          >
+            <div
+              className={`min-h-screen w-2/5 flex flex-col  items-center justify-center mx-auto z-10 relative ${
+                width < 950 ? "p-4 gap-4" : "p-4"
+              }`}
+            >
+              <div
+                className={`flex bg-white w-full rounded-2xl ${
+                  width < 600 ? "flex-col mx-auto" : "flex-col"
+                } gap-2 p-4`}
+              >
+                <div className="w-full flex flex-row justify-between items-center gap-12">
+                  <h2 className="text-xl font-bold text-[#1E1E1E]">
+                    Your Performance
+                  </h2>
+                  <Image
+                    src={CloseIcon}
+                    alt="closeicon"
+                    className="w-4 h-4 cursor-pointer"
+                    onClick={handlePerform}
+                  />
+                </div>
+
+                <div className="flex justify-center gap-2">
+                  <button
+                    onClick={() => setSelectedLeg("left")}
+                    className={`px-4 py-0.5 rounded-full font-semibold text-sm cursor-pointer ${
+                      selectedLeg === "left"
+                        ? "bg-[#005585] text-white"
+                        : "bg-gray-300 text-black"
+                    }`}
+                  >
+                    Left
+                  </button>
+                  <button
+                    onClick={() => setSelectedLeg("right")}
+                    className={`px-4 py-0.5 rounded-full font-semibold text-sm cursor-pointer ${
+                      selectedLeg === "right"
+                        ? "bg-[#005585] text-white"
+                        : "bg-gray-300 text-black"
+                    }`}
+                  >
+                    Right
+                  </button>
+                </div>
+                <div
+                  className="w-full"
+                  style={{ height: "40vh", minHeight: "250px" }}
+                >
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={graphdata}>
+                      {/* Hide X-axis */}
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis
+                        dataKey="name" // Replace with your actual X-axis field (e.g., "x", "label", etc.)
+                        tick={{ fontSize: 12 }}
+                        textAnchor="end"
+                      />
+                      {["oks", "sf12", "koos", "kss", "fjs"].map((key, i) => {
+                        const colors = [
+                          "#4F46E5", // Indigo
+                          "#A855F7", // Purple
+                          "#10B981", // Emerald
+                          "#F97316", // Orange
+                          "#3B82F6", // Blue
+                        ];
+
+                        const labels = {
+                          oks: "Oxford Knee Score",
+                          sf12: "Short Form - 12",
+                          koos: "KOOS",
+                          kss: "Knee Society Score",
+                          fjs: "Forgotten Joint Score",
+                        };
+
+                        return (
+                          <Line
+                            key={key}
+                            type="monotone"
+                            dataKey={key}
+                            connectNulls={true} // Continue connecting lines even when there's no data
+                            name={labels[key]}
+                            stroke={colors[i]}
+                            strokeWidth={2}
+                            dot={({ cx, cy, payload, index }) => {
+                              // Check if the value exists before rendering the dot
+                              if (payload[key] == null || payload[key] === 0) {
+                                return null; // Don't render the dot if there's no data
+                              }
+
+                              return (
+                                <circle
+                                  key={`dot-${index}`} // Ensure unique key
+                                  cx={cx}
+                                  cy={cy}
+                                  r={3}
+                                  stroke={colors[i]}
+                                  strokeWidth={1}
+                                  fill={colors[i]}
+                                />
+                              );
+                            }}
+                            activeDot={({ payload }) => {
+                              // Only show active dot if there's data
+                              if (payload[key] == null || payload[key] === 0) {
+                                return null; // Don't render active dot if there's no data
+                              }
+
+                              return (
+                                <circle
+                                  r={6}
+                                  stroke="black"
+                                  strokeWidth={2}
+                                  fill="white"
+                                />
+                              );
+                            }}
+                          />
+                        );
+                      })}
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
       <Login
         isOpen={isOpen}

@@ -777,6 +777,742 @@ const page = () => {
     },
   ];
 
+  const ksspreopnew = [
+    {
+      questionText: "Pain with level walking",
+      type: "single",
+      options: Array.from({ length: 11 }, (_, i) => `(${i})`),
+    },
+    {
+      questionText: "Pain with stairs or inclines",
+      type: "single",
+      options: Array.from({ length: 11 }, (_, i) => `(${i})`),
+    },
+    {
+      questionText: 'Does this knee feel "normal" to you?',
+      type: "single",
+      options: ["Always (5)", "Sometimes (3)", "Never (0)"],
+    },
+    {
+      questionText:
+        "Currently, how satisfied are you with the pain level of your knee while sitting?",
+      type: "single",
+      options: [
+        "Very Satisfied (8)",
+        "Satisfied (6)",
+        "Neutral (4)",
+        "Dissatisfied (2)",
+        "Very Dissatisfied (0)",
+      ],
+    },
+    {
+      questionText:
+        "Currently, how satisfied are you with the pain level of your knee while lying in bed?",
+      type: "single",
+      options: [
+        "Very Satisfied (8)",
+        "Satisfied (6)",
+        "Neutral (4)",
+        "Dissatisfied (2)",
+        "Very Dissatisfied (0)",
+      ],
+    },
+    {
+      questionText:
+        "Currently, how satisfied are you with your knee function while getting out of bed?",
+      type: "single",
+      options: [
+        "Very Satisfied (8)",
+        "Satisfied (6)",
+        "Neutral (4)",
+        "Dissatisfied (2)",
+        "Very Dissatisfied (0)",
+      ],
+    },
+    {
+      questionText:
+        "Currently, how satisfied are you with your knee function while performing light household duties?",
+      type: "single",
+      options: [
+        "Very Satisfied (8)",
+        "Satisfied (6)",
+        "Neutral (4)",
+        "Dissatisfied (2)",
+        "Very Dissatisfied (0)",
+      ],
+    },
+    {
+      questionText:
+        "Currently, how satisfied are you with your knee function while performing leisure recreational activities?",
+      type: "single",
+      options: [
+        "Very Satisfied (8)",
+        "Satisfied (6)",
+        "Neutral (4)",
+        "Dissatisfied (2)",
+        "Very Dissatisfied (0)",
+      ],
+    },
+    {
+      questionText:
+        "Do you expect your knee joint replacement surgery will relieve your knee pain?",
+      type: "single",
+      options: [
+        "no, not at all (1)",
+        "yes, a little bit (2)",
+        "yes, somewhat (3)",
+        "yes, a moderate amount (4)",
+        "yes, a lot (5)",
+      ],
+    },
+    {
+      questionText:
+        "Do you expect your surgery will help you carry out your normal activities of daily living?",
+      type: "single",
+      options: [
+        "no, not at all (1)",
+        "yes, a little bit (2)",
+        "yes, somewhat (3)",
+        "yes, a moderate amount (4)",
+        "yes, a lot (5)",
+      ],
+    },
+    {
+      questionText:
+        "Do you expect your surgery will help you perform leisure, recreational or sports activities?",
+      type: "single",
+      options: [
+        "no, not at all (1)",
+        "yes, a little bit (2)",
+        "yes, somewhat (3)",
+        "yes, a moderate amount (4)",
+        "yes, a lot (5)",
+      ],
+    },
+    {
+      questionText:
+        "Can you walk without any aids (such as a cane, crutches or wheelchair)? If no, which of the following aid(s) do you use?",
+      type: "single",
+      options: [
+        "wheelchair (-10)",
+        "one crutch (-4)",
+        "walker (-8)",
+        "one cane (-4)",
+        "crutches (-8)",
+        "knee sleeve / brace (-2)",
+        "two canes (-6)",
+        "None (0)",
+      ],
+    },
+    {
+      questionText:
+        "For how long can you stand (with or without aid) before sitting due to knee discomfort?",
+      type: "single",
+      options: [
+        "cannot stand (0)",
+        "0-5 minutes (3)",
+        "6-15 minutes (6)",
+        "16-30 minutes (9)",
+        "31-60 minutes (12)",
+        "more than an hour (15)",
+      ],
+    },
+    {
+      questionText:
+        "For how long can you walk (with or without aid) before stopping due to knee discomfort?",
+      type: "single",
+      options: [
+        "cannot walk (0)",
+        "0-5 minutes (3)",
+        "6-15 minutes (6)",
+        "16-30 minutes (9)",
+        "31-60 minutes (12)",
+        "more than an hour (15)",
+      ],
+    },
+    {
+      questionText:
+        "How much does your knee bother you during walking on an uneven surface?",
+      type: "single",
+      options: [
+        "no bother (5)",
+        "slight (4)",
+        "moderate (3)",
+        "severe (2)",
+        "very severe (1)",
+        "I never do this (0)",
+        "cannot do (0)",
+      ],
+    },
+    {
+      questionText:
+        "How much does your knee bother you during turning or pivoting on your leg?",
+      type: "single",
+      options: [
+        "no bother (5)",
+        "slight (4)",
+        "moderate (3)",
+        "severe (2)",
+        "very severe (1)",
+        "I never do this (0)",
+        "cannot do (0)",
+      ],
+    },
+    {
+      questionText:
+        "How much does your knee bother you during climbing up or down a flight of stairs?",
+      type: "single",
+      options: [
+        "no bother (5)",
+        "slight (4)",
+        "moderate (3)",
+        "severe (2)",
+        "very severe (1)",
+        "I never do this (0)",
+        "cannot do (0)",
+      ],
+    },
+    {
+      questionText:
+        "How much does your knee bother you during getting up from a low couch or a chair without arms?",
+      type: "single",
+      options: [
+        "no bother (5)",
+        "slight (4)",
+        "moderate (3)",
+        "severe (2)",
+        "very severe (1)",
+        "I never do this (0)",
+        "cannot do (0)",
+      ],
+    },
+    {
+      questionText:
+        "How much does your knee bother you during getting into or out of a car?",
+      type: "single",
+      options: [
+        "no bother (5)",
+        "slight (4)",
+        "moderate (3)",
+        "severe (2)",
+        "very severe (1)",
+        "I never do this (0)",
+        "cannot do (0)",
+      ],
+    },
+    {
+      questionText:
+        "How much does your knee bother you during moving laterally (stepping to the side)?",
+      type: "single",
+      options: [
+        "no bother (5)",
+        "slight (4)",
+        "moderate (3)",
+        "severe (2)",
+        "very severe (1)",
+        "I never do this (0)",
+        "cannot do (0)",
+      ],
+    },
+    {
+      questionText:
+        "How much does your knee bother you during climbing a ladder or step stool?",
+      type: "single",
+      options: [
+        "no bother (5)",
+        "slight (4)",
+        "moderate (3)",
+        "severe (2)",
+        "very severe (1)",
+        "I never do this (0)",
+        "cannot do (0)",
+      ],
+    },
+    {
+      questionText:
+        "How much does your knee bother you during carrying a shopping bag for a block?",
+      type: "single",
+      options: [
+        "no bother (5)",
+        "slight (4)",
+        "moderate (3)",
+        "severe (2)",
+        "very severe (1)",
+        "I never do this (0)",
+        "cannot do (0)",
+      ],
+    },
+    {
+      questionText: "How much does your knee bother you during squatting?",
+      type: "single",
+      options: [
+        "no bother (5)",
+        "slight (4)",
+        "moderate (3)",
+        "severe (2)",
+        "very severe (1)",
+        "I never do this (0)",
+        "cannot do (0)",
+      ],
+    },
+    {
+      questionText: "How much does your knee bother you during kneeling?",
+      type: "single",
+      options: [
+        "no bother (5)",
+        "slight (4)",
+        "moderate (3)",
+        "severe (2)",
+        "very severe (1)",
+        "I never do this (0)",
+        "cannot do (0)",
+      ],
+    },
+    {
+      questionText: "How much does your knee bother you during running?",
+      type: "single",
+      options: [
+        "no bother (5)",
+        "slight (4)",
+        "moderate (3)",
+        "severe (2)",
+        "very severe (1)",
+        "I never do this (0)",
+        "cannot do (0)",
+      ],
+    },
+    {
+      questionText:
+        "Please check 3 of the activities below that you consider most important to you.",
+      type: "multi",
+      options: [
+        "Swimming",
+        "Golfing (18 holes)",
+        "Road Cycling (>30mins)",
+        "Gardening",
+        "Bowling",
+        "Racquet Sports (Tennis, Racquetball, etc.)",
+        "Distance Walking",
+        "Dancing / Ballet",
+        "Stretching Exercises (stretching out your muscles)",
+        "Weight-lifting",
+        "Leg Extensions",
+        "Stair-Climber",
+        "Stationary Biking / Spinning",
+        "Leg Press",
+        "Jogging",
+        "Elliptical Trainer",
+        "Aerobic Exercises",
+      ],
+    },
+    {
+      questionText:
+        "How much does your knee bother you during the activity 1 you selected ?",
+      type: "single",
+      options: [
+        "no bother (5)",
+        "slight (4)",
+        "moderate (3)",
+        "severe (2)",
+        "very severe (1)",
+        "cannot do because of knee (0)",
+      ],
+    },
+    {
+      questionText:
+        "How much does your knee bother you during the activity 2 ?",
+      type: "single",
+      options: [
+        "no bother (5)",
+        "slight (4)",
+        "moderate (3)",
+        "severe (2)",
+        "very severe (1)",
+        "cannot do because of knee (0)",
+      ],
+    },
+    {
+      questionText:
+        "How much does your knee bother you during the activity 3 you selected ?",
+      type: "single",
+      options: [
+        "no bother (5)",
+        "slight (4)",
+        "moderate (3)",
+        "severe (2)",
+        "very severe (1)",
+        "cannot do because of knee (0)",
+      ],
+    },
+  ];
+  const ksspostopnew = [
+    {
+      questionText: "Pain with level walking",
+      type: "single",
+      options: Array.from({ length: 11 }, (_, i) => `(${i})`),
+    },
+    {
+      questionText: "Pain with stairs or inclines",
+      type: "single",
+      options: Array.from({ length: 11 }, (_, i) => `(${i})`),
+    },
+    {
+      questionText: 'Does this knee feel "normal" to you?',
+      type: "single",
+      options: ["Always (5)", "Sometimes (3)", "Never (0)"],
+    },
+    {
+      questionText:
+        "Currently, how satisfied are you with the pain level of your knee while sitting?",
+      type: "single",
+      options: [
+        "Very Satisfied (8)",
+        "Satisfied (6)",
+        "Neutral (4)",
+        "Dissatisfied (2)",
+        "Very Dissatisfied (0)",
+      ],
+    },
+    {
+      questionText:
+        "Currently, how satisfied are you with the pain level of your knee while lying in bed?",
+      type: "single",
+      options: [
+        "Very Satisfied (8)",
+        "Satisfied (6)",
+        "Neutral (4)",
+        "Dissatisfied (2)",
+        "Very Dissatisfied (0)",
+      ],
+    },
+    {
+      questionText:
+        "Currently, how satisfied are you with your knee function while getting out of bed?",
+      type: "single",
+      options: [
+        "Very Satisfied (8)",
+        "Satisfied (6)",
+        "Neutral (4)",
+        "Dissatisfied (2)",
+        "Very Dissatisfied (0)",
+      ],
+    },
+    {
+      questionText:
+        "Currently, how satisfied are you with your knee function while performing light household duties?",
+      type: "single",
+      options: [
+        "Very Satisfied (8)",
+        "Satisfied (6)",
+        "Neutral (4)",
+        "Dissatisfied (2)",
+        "Very Dissatisfied (0)",
+      ],
+    },
+    {
+      questionText:
+        "Currently, how satisfied are you with your knee function while performing leisure recreational activities?",
+      type: "single",
+      options: [
+        "Very Satisfied (8)",
+        "Satisfied (6)",
+        "Neutral (4)",
+        "Dissatisfied (2)",
+        "Very Dissatisfied (0)",
+      ],
+    },
+    {
+      questionText: "My expectations for pain relief were...",
+      type: "single",
+      options: [
+        'Too High - "I\'m a lot worse than I thought" (1)',
+        'Too High - "I\'m somewhat worse than I thought" (2)',
+        'Just Right - "My expectations were met" (3)',
+        'Too Low - "I\'m somewhat better than I thought" (4)',
+        'Too Low - "I\'m a lot better than I thought" (5)',
+      ],
+    },
+    {
+      questionText:
+        "My expectations for being able to do my normal activities of daily living were...",
+      type: "single",
+      options: [
+        'Too High - "I\'m a lot worse than I thought" (1)',
+        'Too High - "I\'m somewhat worse than I thought" (2)',
+        'Just Right - "My expectations were met" (3)',
+        'Too Low - "I\'m somewhat better than I thought" (4)',
+        'Too Low - "I\'m a lot better than I thought" (5)',
+      ],
+    },
+    {
+      questionText:
+        "My expectations for being able to do my leisure, recreational or sports activities were...",
+      type: "single",
+      options: [
+        'Too High - "I\'m a lot worse than I thought" (1)',
+        'Too High - "I\'m somewhat worse than I thought" (2)',
+        'Just Right - "My expectations were met" (3)',
+        'Too Low - "I\'m somewhat better than I thought" (4)',
+        'Too Low - "I\'m a lot better than I thought" (5)',
+      ],
+    },
+    {
+      questionText:
+        "Can you walk without any aids (such as a cane, crutches or wheelchair)? If no, which of the following aid(s) do you use?",
+      type: "single",
+      options: [
+        "wheelchair (-10)",
+        "one crutch (-4)",
+        "walker (-8)",
+        "one cane (-4)",
+        "crutches (-8)",
+        "knee sleeve / brace (-2)",
+        "two canes (-6)",
+        "None (0)",
+      ],
+    },
+    {
+      questionText:
+        "For how long can you stand (with or without aid) before sitting due to knee discomfort?",
+      type: "single",
+      options: [
+        "cannot stand (0)",
+        "0-5 minutes (3)",
+        "6-15 minutes (6)",
+        "16-30 minutes (9)",
+        "31-60 minutes (12)",
+        "more than an hour (15)",
+      ],
+    },
+    {
+      questionText:
+        "For how long can you walk (with or without aid) before stopping due to knee discomfort?",
+      type: "single",
+      options: [
+        "cannot walk (0)",
+        "0-5 minutes (3)",
+        "6-15 minutes (6)",
+        "16-30 minutes (9)",
+        "31-60 minutes (12)",
+        "more than an hour (15)",
+      ],
+    },
+    {
+      questionText:
+        "How much does your knee bother you during walking on an uneven surface?",
+      type: "single",
+      options: [
+        "no bother (5)",
+        "slight (4)",
+        "moderate (3)",
+        "severe (2)",
+        "very severe (1)",
+        "I never do this (0)",
+        "cannot do (0)",
+      ],
+    },
+    {
+      questionText:
+        "How much does your knee bother you during turning or pivoting on your leg?",
+      type: "single",
+      options: [
+        "no bother (5)",
+        "slight (4)",
+        "moderate (3)",
+        "severe (2)",
+        "very severe (1)",
+        "I never do this (0)",
+        "cannot do (0)",
+      ],
+    },
+    {
+      questionText:
+        "How much does your knee bother you during climbing up or down a flight of stairs?",
+      type: "single",
+      options: [
+        "no bother (5)",
+        "slight (4)",
+        "moderate (3)",
+        "severe (2)",
+        "very severe (1)",
+        "I never do this (0)",
+        "cannot do (0)",
+      ],
+    },
+    {
+      questionText:
+        "How much does your knee bother you during getting up from a low couch or a chair without arms?",
+      type: "single",
+      options: [
+        "no bother (5)",
+        "slight (4)",
+        "moderate (3)",
+        "severe (2)",
+        "very severe (1)",
+        "I never do this (0)",
+        "cannot do (0)",
+      ],
+    },
+    {
+      questionText:
+        "How much does your knee bother you during getting into or out of a car?",
+      type: "single",
+      options: [
+        "no bother (5)",
+        "slight (4)",
+        "moderate (3)",
+        "severe (2)",
+        "very severe (1)",
+        "I never do this (0)",
+        "cannot do (0)",
+      ],
+    },
+    {
+      questionText:
+        "How much does your knee bother you during moving laterally (stepping to the side)?",
+      type: "single",
+      options: [
+        "no bother (5)",
+        "slight (4)",
+        "moderate (3)",
+        "severe (2)",
+        "very severe (1)",
+        "I never do this (0)",
+        "cannot do (0)",
+      ],
+    },
+    {
+      questionText:
+        "How much does your knee bother you during climbing a ladder or step stool?",
+      type: "single",
+      options: [
+        "no bother (5)",
+        "slight (4)",
+        "moderate (3)",
+        "severe (2)",
+        "very severe (1)",
+        "I never do this (0)",
+        "cannot do (0)",
+      ],
+    },
+    {
+      questionText:
+        "How much does your knee bother you during carrying a shopping bag for a block?",
+      type: "single",
+      options: [
+        "no bother (5)",
+        "slight (4)",
+        "moderate (3)",
+        "severe (2)",
+        "very severe (1)",
+        "I never do this (0)",
+        "cannot do (0)",
+      ],
+    },
+    {
+      questionText: "How much does your knee bother you during squatting?",
+      type: "single",
+      options: [
+        "no bother (5)",
+        "slight (4)",
+        "moderate (3)",
+        "severe (2)",
+        "very severe (1)",
+        "I never do this (0)",
+        "cannot do (0)",
+      ],
+    },
+    {
+      questionText: "How much does your knee bother you during kneeling?",
+      type: "single",
+      options: [
+        "no bother (5)",
+        "slight (4)",
+        "moderate (3)",
+        "severe (2)",
+        "very severe (1)",
+        "I never do this (0)",
+        "cannot do (0)",
+      ],
+    },
+    {
+      questionText: "How much does your knee bother you during running?",
+      type: "single",
+      options: [
+        "no bother (5)",
+        "slight (4)",
+        "moderate (3)",
+        "severe (2)",
+        "very severe (1)",
+        "I never do this (0)",
+        "cannot do (0)",
+      ],
+    },
+    {
+      questionText:
+        "Please check 3 of the activities below that you consider most important to you.",
+      type: "multi",
+      options: [
+        "Swimming",
+        "Golfing (18 holes)",
+        "Road Cycling (>30mins)",
+        "Gardening",
+        "Bowling",
+        "Racquet Sports (Tennis, Racquetball, etc.)",
+        "Distance Walking",
+        "Dancing / Ballet",
+        "Stretching Exercises (stretching out your muscles)",
+        "Weight-lifting",
+        "Leg Extensions",
+        "Stair-Climber",
+        "Stationary Biking / Spinning",
+        "Leg Press",
+        "Jogging",
+        "Elliptical Trainer",
+        "Aerobic Exercises",
+      ],
+    },
+    {
+      questionText:
+        "How much does your knee bother you during the activity 1 you selected ?",
+      type: "single",
+      options: [
+        "no bother (5)",
+        "slight (4)",
+        "moderate (3)",
+        "severe (2)",
+        "very severe (1)",
+        "cannot do because of knee (0)",
+      ],
+    },
+    {
+      questionText:
+        "How much does your knee bother you during the activity 2 ?",
+      type: "single",
+      options: [
+        "no bother (5)",
+        "slight (4)",
+        "moderate (3)",
+        "severe (2)",
+        "very severe (1)",
+        "cannot do because of knee (0)",
+      ],
+    },
+    {
+      questionText:
+        "How much does your knee bother you during the activity 3 you selected ?",
+      type: "single",
+      options: [
+        "no bother (5)",
+        "slight (4)",
+        "moderate (3)",
+        "severe (2)",
+        "very severe (1)",
+        "cannot do because of knee (0)",
+      ],
+    },
+  ];
+
   useEffect(() => {
     if (!questionnaireTitle) return;
 
@@ -794,7 +1530,7 @@ const page = () => {
     } else if (t === "knee society score (kss)") {
       const p = questionnairePeriod.trim().toLowerCase();
       console.log("Inside kss", p);
-      selectedQuestions = p.includes("pre") ? ksspreop : ksspostop;
+      selectedQuestions = p.includes("pre") ? ksspreopnew : ksspostopnew;
     } else if (t === "short form - 12 (sf-12)") {
       selectedQuestions = sf;
     }
@@ -856,6 +1592,8 @@ const page = () => {
   const currentQuestion = questions[currentIndex];
 
   const handleOptionClick = (option) => {
+    const t = questionnaireTitle.trim().toLowerCase();
+
     const id = currentIndex;
     const type = currentQuestion.type;
     let updatedAnswers;
@@ -870,6 +1608,10 @@ const page = () => {
           [id]: selected.filter((o) => o !== option),
         };
       } else {
+        // If KSS, apply limit of 3
+        if (t === "knee society score (kss)" && selected.length >= 3) {
+          return; // Do not allow selecting more than 3
+        }
         updatedAnswers = {
           ...answers,
           [id]: [...selected, option],
@@ -882,6 +1624,7 @@ const page = () => {
     if (typeof window !== "undefined") {
       sessionStorage.setItem("oks_answers", JSON.stringify(updatedAnswers));
     }
+    console.log("Selected options", answers);
   };
 
   const isSelected = (option) => (answers[currentIndex] || []).includes(option);
@@ -953,6 +1696,7 @@ const page = () => {
       }
       setIsSubmitting(true);
       console.log("Total KSS Score:", scores);
+      // return;
       await sendQuestionnaireScores(scores, Date.now());
       await updateQuestionnaireStatus();
 
@@ -1092,12 +1836,18 @@ const page = () => {
   function calculateKneeSocietyScore(selectedAnswers) {
     let totalScore = 0;
 
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < 29; i++) {
       const answer = selectedAnswers[i];
       if (!answer) continue;
+      if (i === 25) continue;
 
       const answerText = Array.isArray(answer) ? answer[0] : answer;
       let score = 0;
+
+      const answer1 = answer[0]; // assuming single-answer selection per question
+      const match = answer1.match(/\(([-]?\d+)\)/);
+
+      console.log("Total KSS Pre Op Answers: ", i + " " + match[1]);
 
       if (i < 5) {
         if (answerText.includes("(0)")) score = 4;
@@ -1113,11 +1863,16 @@ const page = () => {
         else if (answerText.includes("(5)")) score = 5;
       }
 
-      totalScore += score;
+      let score1 = parseInt(match[1], 10);
+      if (i === 0 || i === 1) {
+        score1 = 10 - score1;
+      }
+      totalScore += score1;
     }
+    console.log("Total KSS Pre Op Answers: ", totalScore);
 
-    const minScore = 3;
-    const maxScore = 35;
+    const minScore = -7;
+    const maxScore = 180;
     const normalizedScore = Math.max(
       0,
       ((totalScore - minScore) / (maxScore - minScore)) * 100
@@ -1456,6 +2211,16 @@ const page = () => {
                         : "h-[60%]"
                     }`}
                   >
+                    {/* Show selected activities only for last 3 questions */}
+                    {[26, 27, 28].includes(currentIndex) &&
+                      answers[25]?.length === 3 && (
+                        <div className=" text-white">
+                          Selected Activity :{" "}
+                          <span className="font-medium">
+                            {answers[25][currentIndex - 26]}
+                          </span>
+                        </div>
+                      )}
                     {currentQuestion &&
                       currentQuestion.options.map((option, idx) => (
                         <label
@@ -1476,6 +2241,13 @@ const page = () => {
                               type="checkbox"
                               value={option}
                               checked={isSelected(option)}
+                              disabled={
+                                (questionnaireTitle.trim().toLowerCase() ===
+                                  "knee society score (kss)") ===
+                                  "knee society score (kss)" &&
+                                !isSelected(option) &&
+                                (answers[currentIndex]?.length || 0) >= 3
+                              }
                               onChange={() => handleOptionClick(option)}
                               className="accent-[#005585]"
                             />
