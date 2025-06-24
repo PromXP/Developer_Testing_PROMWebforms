@@ -471,7 +471,7 @@ export default function Home() {
                         item.leg === "Left" ? "text-blue-500" : "text-green-500"
                       }`}
                     >
-                      {item.leg} Leg
+                      {item.leg} Knee
                     </p>
                     <p
                       className={`text-white font-normal text-base rounded-2xl px-3 py-1 ${
