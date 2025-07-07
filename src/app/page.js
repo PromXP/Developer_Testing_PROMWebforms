@@ -160,26 +160,33 @@ export default function Home() {
     });
   };
 
-  useEffect(() => {
-    const tempData = [];
+ useEffect(() => {
+  const tempData = [];
+  const today = new Date();
 
-    if (userData?.user?.questionnaire_assigned_left) {
-      const mappedLeft = mapQuestionnaireData(
-        userData.user.questionnaire_assigned_left,
-        "Left"
-      );
-      tempData.push(...mappedLeft);
-    }
-    if (userData?.user?.questionnaire_assigned_right) {
-      const mappedRight = mapQuestionnaireData(
-        userData.user.questionnaire_assigned_right,
-        "Right"
-      );
-      tempData.push(...mappedRight);
-    }
+  const isPastOrToday = (deadline) => {
+    return new Date(deadline) <= today;
+  };
 
-    setTransformedData(tempData); // <-- THIS IS THE KEY!
-  }, [userData]);
+  if (userData?.user?.questionnaire_assigned_left) {
+    const mappedLeft = mapQuestionnaireData(
+      userData.user.questionnaire_assigned_left,
+      "Left"
+    ).filter((q) => isPastOrToday(q.deadline));
+    tempData.push(...mappedLeft);
+  }
+
+  if (userData?.user?.questionnaire_assigned_right) {
+    const mappedRight = mapQuestionnaireData(
+      userData.user.questionnaire_assigned_right,
+      "Right"
+    ).filter((q) => isPastOrToday(q.deadline));
+    tempData.push(...mappedRight);
+  }
+
+  setTransformedData(tempData);
+}, [userData]);
+
 
   const handleUserData = (data) => {
     setUserData(data);
