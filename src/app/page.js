@@ -160,33 +160,32 @@ export default function Home() {
     });
   };
 
- useEffect(() => {
-  const tempData = [];
-  const today = new Date();
+  useEffect(() => {
+    const tempData = [];
+    const today = new Date();
 
-  const isPastOrToday = (deadline) => {
-    return new Date(deadline) <= today;
-  };
+    const isPastOrToday = (deadline) => {
+      return new Date(deadline) <= today;
+    };
 
-  if (userData?.user?.questionnaire_assigned_left) {
-    const mappedLeft = mapQuestionnaireData(
-      userData.user.questionnaire_assigned_left,
-      "Left"
-    ).filter((q) => isPastOrToday(q.deadline));
-    tempData.push(...mappedLeft);
-  }
+    if (userData?.user?.questionnaire_assigned_left) {
+      const mappedLeft = mapQuestionnaireData(
+        userData.user.questionnaire_assigned_left,
+        "Left"
+      ).filter((q) => isPastOrToday(q.deadline));
+      tempData.push(...mappedLeft);
+    }
 
-  if (userData?.user?.questionnaire_assigned_right) {
-    const mappedRight = mapQuestionnaireData(
-      userData.user.questionnaire_assigned_right,
-      "Right"
-    ).filter((q) => isPastOrToday(q.deadline));
-    tempData.push(...mappedRight);
-  }
+    if (userData?.user?.questionnaire_assigned_right) {
+      const mappedRight = mapQuestionnaireData(
+        userData.user.questionnaire_assigned_right,
+        "Right"
+      ).filter((q) => isPastOrToday(q.deadline));
+      tempData.push(...mappedRight);
+    }
 
-  setTransformedData(tempData);
-}, [userData]);
-
+    setTransformedData(tempData);
+  }, [userData]);
 
   const handleUserData = (data) => {
     setUserData(data);
@@ -354,6 +353,8 @@ export default function Home() {
     setPerformshow(!performshow);
   };
 
+  const [filterStatus, setFilterStatus] = useState("Pending");
+
   return (
     <>
       <div
@@ -400,6 +401,7 @@ export default function Home() {
                     userData?.user?.last_name || "User"}
                 </p>
               </div>
+
               <div className={`w-full flex flex-row gap-8 items-center`}>
                 <p
                   className={`font-normal text-base text-white ${
@@ -427,13 +429,35 @@ export default function Home() {
               width < 750 ? "justify-center" : "justify-between items-center"
             }`}
           >
-            <div>
+            <div className="flex flex-col items-center gap-4">
               <button
-                className="bg-[#005585] text-white px-6 py-2 rounded-full shadow-md hover:bg-[#004466] transition duration-300 cursor-pointer"
+                className="bg-[#005585] w-fit text-white px-6 py-2 rounded-full shadow-md hover:bg-[#004466] transition duration-300 cursor-pointer"
                 onClick={handlePerform}
               >
                 Your Performance
               </button>
+
+              <div className="flex flex-row gap-4">
+                <button
+                  className={`${
+                    filterStatus === "Pending" ? "bg-[#FF4C4C]" : "bg-gray-300"
+                  } text-white text-sm px-4 py-1 rounded-full shadow-md transition duration-300 cursor-pointer`}
+                  onClick={() => setFilterStatus("Pending")}
+                >
+                  PENDING
+                </button>
+
+                <button
+                  className={`${
+                    filterStatus === "Completed"
+                      ? "bg-[#199855]"
+                      : "bg-gray-300"
+                  } text-white text-sm px-4 py-1 rounded-full shadow-md transition duration-300 cursor-pointer`}
+                  onClick={() => setFilterStatus("Completed")}
+                >
+                  COMPLETED
+                </button>
+              </div>
             </div>
 
             <Image src={Human} alt="human" className="w-[300px] h-full" />
@@ -453,11 +477,7 @@ export default function Home() {
             } gap-4 p-4`}
           >
             {[...transformedData]
-              .sort((a, b) => {
-                if (a.status === "Pending" && b.status !== "Pending") return -1;
-                if (a.status !== "Pending" && b.status === "Pending") return 1;
-                return 0;
-              })
+              .filter((item) => item.status === filterStatus)
               .map((item, index) => (
                 <div
                   key={index}
