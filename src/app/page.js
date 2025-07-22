@@ -179,42 +179,72 @@ export default function Home() {
     }
   };
 
-  useEffect(() => {
-    const tempData = [];
-    const today = new Date();
-    console.log(
-      "Today:",
-      userData?.user?.post_surgery_details_left?.date_of_surgery
+useEffect(() => {
+  const tempData = [];
+  const today = new Date();
+
+  const processSide = (assignedList, surgeryDateStr, sideLabel) => {
+    const surgeryDate = surgeryDateStr;
+    const enriched = assignedList.map((q) => ({
+      ...q,
+      surgery_date: surgeryDate,
+    }));
+
+    const live = [];
+    const expiredPending = [];
+
+    enriched.forEach((q) => {
+      if (isQuestionnaireVisible(q, today)) {
+        live.push(q);
+      } else {
+        const deadline = new Date(q.deadline);
+        const daysAfterDeadline = (today - deadline) / (1000 * 60 * 60 * 24);
+        if (q.completed === 0 && today > deadline && daysAfterDeadline > 14) {
+          expiredPending.push(q);
+        }
+      }
+    });
+// 1. Sort by deadline descending
+expiredPending.sort((a, b) => new Date(b.deadline) - new Date(a.deadline));
+
+// 2. Get latest deadline date
+const latestDeadline = expiredPending.length > 0 ? expiredPending[0].deadline : null;
+
+// 3. Filter all expired with the latest deadline
+const latestExpired = latestDeadline
+  ? expiredPending.filter(q => q.deadline === latestDeadline)
+  : [];
+
+const combined = [...live, ...latestExpired];
+
+
+    // Attach side and sort final combined data by deadline
+    return mapQuestionnaireData(combined, sideLabel).sort(
+      (a, b) => new Date(a.deadline) - new Date(b.deadline)
     );
+  };
 
-    if (userData?.user?.questionnaire_assigned_left) {
-      const surgeryDateLeft =
-        userData?.user?.post_surgery_details_left?.date_of_surgery;
-      const mappedLeft = mapQuestionnaireData(
-        userData.user.questionnaire_assigned_left.map((q) => ({
-          ...q,
-          surgery_date: surgeryDateLeft, // inject surgery_date
-        })),
-        "Left"
-      ).filter((q) => isQuestionnaireVisible(q, today));
-      tempData.push(...mappedLeft);
-    }
+  if (userData?.user?.questionnaire_assigned_left) {
+    const leftResult = processSide(
+      userData.user.questionnaire_assigned_left,
+      userData?.user?.post_surgery_details_left?.date_of_surgery,
+      "Left"
+    );
+    tempData.push(...leftResult);
+  }
 
-    if (userData?.user?.questionnaire_assigned_right) {
-      const surgeryDateRight =
-        userData?.user?.post_surgery_details_right?.date_of_surgery;
-      const mappedRight = mapQuestionnaireData(
-        userData.user.questionnaire_assigned_right.map((q) => ({
-          ...q,
-          surgery_date: surgeryDateRight, // inject surgery_date
-        })),
-        "Right"
-      ).filter((q) => isQuestionnaireVisible(q, today));
-      tempData.push(...mappedRight);
-    }
+  if (userData?.user?.questionnaire_assigned_right) {
+    const rightResult = processSide(
+      userData.user.questionnaire_assigned_right,
+      userData?.user?.post_surgery_details_right?.date_of_surgery,
+      "Right"
+    );
+    tempData.push(...rightResult);
+  }
 
-    setTransformedData(tempData);
-  }, [userData]);
+  setTransformedData(tempData);
+}, [userData]);
+
 
   const handleUserData = (data) => {
     setUserData(data);
