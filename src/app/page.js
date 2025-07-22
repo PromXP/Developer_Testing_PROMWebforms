@@ -160,27 +160,56 @@ export default function Home() {
     });
   };
 
+  const isQuestionnaireVisible = (q, today) => {
+    const deadlineDate = new Date(q.deadline);
+    const surgeryDate = q.surgery_date ? new Date(q.surgery_date) : null;
+    const now = today;
+
+    // Example: Pre-op if period contains "PRE OP" (adjust as needed)
+    if (q.period && q.period.toUpperCase().includes("PRE OP")) {
+      // Show only if today is before surgery date
+      return surgeryDate ? now < surgeryDate : true;
+    } else {
+      // Post-op: show if today is on/before deadline and not more than 14 days after deadline
+      const daysAfterDeadline = (now - deadlineDate) / (1000 * 60 * 60 * 24);
+      return (
+        now >= deadlineDate ||
+        (daysAfterDeadline > 0 && daysAfterDeadline <= 14)
+      );
+    }
+  };
+
   useEffect(() => {
     const tempData = [];
     const today = new Date();
-
-    const isPastOrToday = (deadline) => {
-      return new Date(deadline) <= today;
-    };
+    console.log(
+      "Today:",
+      userData?.user?.post_surgery_details_left?.date_of_surgery
+    );
 
     if (userData?.user?.questionnaire_assigned_left) {
+      const surgeryDateLeft =
+        userData?.user?.post_surgery_details_left?.date_of_surgery;
       const mappedLeft = mapQuestionnaireData(
-        userData.user.questionnaire_assigned_left,
+        userData.user.questionnaire_assigned_left.map((q) => ({
+          ...q,
+          surgery_date: surgeryDateLeft, // inject surgery_date
+        })),
         "Left"
-      ).filter((q) => isPastOrToday(q.deadline));
+      ).filter((q) => isQuestionnaireVisible(q, today));
       tempData.push(...mappedLeft);
     }
 
     if (userData?.user?.questionnaire_assigned_right) {
+      const surgeryDateRight =
+        userData?.user?.post_surgery_details_right?.date_of_surgery;
       const mappedRight = mapQuestionnaireData(
-        userData.user.questionnaire_assigned_right,
+        userData.user.questionnaire_assigned_right.map((q) => ({
+          ...q,
+          surgery_date: surgeryDateRight, // inject surgery_date
+        })),
         "Right"
-      ).filter((q) => isPastOrToday(q.deadline));
+      ).filter((q) => isQuestionnaireVisible(q, today));
       tempData.push(...mappedRight);
     }
 
@@ -534,12 +563,46 @@ export default function Home() {
                         Deadline
                       </p>
                       <p className="font-semibold text-[16px] text-black">
-                        {new Date(item.deadline).toLocaleString("en-IN", {
-                          timeZone: "Asia/Kolkata",
-                          day: "numeric",
-                          month: "long",
-                          year: "numeric",
-                        })}
+                        {item.period &&
+                        item.period.toUpperCase().includes("PRE OP")
+                          ? item.leg === "Left"
+                            ? userData?.user?.post_surgery_details_left
+                                ?.date_of_surgery
+                              ? new Date(
+                                  new Date(
+                                    userData.user.post_surgery_details_left.date_of_surgery
+                                  ).getTime() -
+                                    1 * 24 * 60 * 60 * 1000
+                                ).toLocaleString("en-IN", {
+                                  timeZone: "Asia/Kolkata",
+                                  day: "numeric",
+                                  month: "long",
+                                  year: "numeric",
+                                })
+                              : "No Surgery Date"
+                            : userData?.user?.post_surgery_details_right
+                                ?.date_of_surgery
+                            ? new Date(
+                                new Date(
+                                  userData.user.post_surgery_details_right.date_of_surgery
+                                ).getTime() -
+                                  1 * 24 * 60 * 60 * 1000
+                              ).toLocaleString("en-IN", {
+                                timeZone: "Asia/Kolkata",
+                                day: "numeric",
+                                month: "long",
+                                year: "numeric",
+                              })
+                            : "No Surgery Date"
+                          : new Date(
+                              new Date(item.deadline).getTime() +
+                                14 * 24 * 60 * 60 * 1000
+                            ).toLocaleString("en-IN", {
+                              timeZone: "Asia/Kolkata",
+                              day: "numeric",
+                              month: "long",
+                              year: "numeric",
+                            })}
                       </p>
                     </div>
                   </div>
