@@ -171,7 +171,13 @@ const page = ({ isOpen, onClose, userDatasend }) => {
             >
               {/* Login Mode */}
               {!showForgotPassword && (
-                <>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault(); // Prevent form reload
+                    fetchData(); // Call your login function
+                  }}
+                  className="flex flex-col gap-5"
+                >
                   {/* Common Heading */}
                   <div
                     className={`w-full flex gap-4 justify-start items-center ${
@@ -196,6 +202,7 @@ const page = ({ isOpen, onClose, userDatasend }) => {
                       onChange={(e) => setuserUHID(e.target.value)}
                     />
                   </div>
+
                   {/* Password Field */}
                   <div
                     className={`w-full flex gap-4 justify-start items-center ${
@@ -243,15 +250,15 @@ const page = ({ isOpen, onClose, userDatasend }) => {
 
                   {/* Login Button */}
                   <div className="w-full flex flex-row justify-center items-center">
-                    <p
-                      className="font-semibold rounded-full px-3 py-[1px] cursor-pointer text-center text-white text-sm border-[#005585] border-2"
+                    <button
+                      type="submit"
+                      className="font-semibold rounded-full px-3 py-[1px] text-center text-white text-sm border-[#005585] border-2"
                       style={{ backgroundColor: "rgba(0, 85, 133, 0.9)" }}
-                      onClick={fetchData}
                     >
                       LOGIN
-                    </p>
+                    </button>
                   </div>
-                </>
+                </form>
               )}
 
               {/* Forgot Password Mode */}
