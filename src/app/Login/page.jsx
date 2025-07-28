@@ -72,6 +72,11 @@ const page = ({ isOpen, onClose, userDatasend }) => {
 
       console.log("Login Data", res.data.user.uhid);
 
+      if(res.data.user.activation_status === 0){
+        showWarning("Your account has been blocked. Contact Admin");
+        return 0;
+      }
+
       // Store in sessionStorage
       if (typeof window !== "undefined") {
         sessionStorage.setItem("uhid", res.data.user.uhid);
