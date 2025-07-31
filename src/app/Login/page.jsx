@@ -297,7 +297,7 @@ const page = ({ isOpen, onClose, userDatasend }) => {
                     </p>
                     <input
                       type="text"
-                      placeholder="Registered Email or UHID"
+                      placeholder="Registered Email"
                       className="w-full text-black px-4 py-2 text-sm rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       style={{ backgroundColor: "rgba(71, 84, 103, 0.1)" }}
                       value={resetEmail}
