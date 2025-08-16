@@ -14,6 +14,8 @@ import Flower from "@/app/assets/flower.png";
 import Closeicon from "@/app/assets/closeicon.png";
 import LoginBg from "@/app/assets/login.jpg";
 
+import Forgotpassword from "@/app/Forgotpassword/page";
+
 import "@/app/globals.css";
 
 const poppins = Poppins({
@@ -56,8 +58,7 @@ const page = ({ isOpen, onClose, userDatasend }) => {
   const [response, setResponse] = useState(null);
 
   const fetchData = async () => {
-    if (!userUHID.trim())
-      return showWarning("UHID / PHONE / EMAIL is required");
+    if (!userUHID.trim()) return showWarning("UHID / PHONE is required");
     if (!userPassword.trim()) return showWarning("PASSWORD is required");
 
     const payload = {
@@ -72,7 +73,7 @@ const page = ({ isOpen, onClose, userDatasend }) => {
 
       console.log("Login Data", res.data.user.uhid);
 
-      if(res.data.user.activation_status === 0){
+      if (res.data.user.activation_status === 0) {
         showWarning("Your account has been blocked. Contact Admin");
         return 0;
       }
@@ -105,45 +106,15 @@ const page = ({ isOpen, onClose, userDatasend }) => {
   };
 
   const [showForgotPassword, setShowForgotPassword] = useState(false);
-  const [resetEmail, setResetEmail] = useState("");
 
-  const handleForgotPassword = async () => {
-    if (!userUHID) {
-      showWarning("Please enter your UHID");
-      setshowAlert(true);
-      setTimeout(() => setshowAlert(false), 3000);
-      return;
-    }
-    if (!resetEmail) {
-      showWarning("Please enter your registered Email");
-      setshowAlert(true);
-      setTimeout(() => setshowAlert(false), 3000);
-      return;
-    }
+  const handleshowforgot = () =>{
+    setShowForgotPassword(false);
+  }
 
-    try {
-      const response = await axios.post(
-        `${API_URL}request_password_reset?uhid=${encodeURIComponent(
-          userUHID
-        )}&email=${encodeURIComponent(resetEmail)}`
-      );
+  const handleshowwarning = (msg) =>{
+    showWarning(msg);
 
-      const data = response.data;
-
-      if (response.ok) {
-        showWarning("Reset link sent to your email.");
-      }
-      // else {
-      //   showWarning(data.message || "Failed to send reset link.");
-      // }
-    } catch (error) {
-      console.log("Error reset", error);
-      showWarning("Entered credentials are incorrect Check your credentials");
-    }
-
-    setshowAlert(true);
-    setTimeout(() => setshowAlert(false), 3000);
-  };
+  }
 
   if (!isOpen) return null;
 
@@ -174,9 +145,14 @@ const page = ({ isOpen, onClose, userDatasend }) => {
                 width < 760 ? "py-0" : "py-4 px-4"
               }`}
             >
+              {showForgotPassword && (
+                <Forgotpassword handleshowforgot={handleshowforgot} handleshowwarning={handleshowwarning}/>
+              )}
+
               {/* Login Mode */}
               {!showForgotPassword && (
                 <form
+                  key="login-form"
                   onSubmit={(e) => {
                     e.preventDefault(); // Prevent form reload
                     fetchData(); // Call your login function
@@ -247,7 +223,11 @@ const page = ({ isOpen, onClose, userDatasend }) => {
                   >
                     <p
                       className="font-bold text-2 text-red-600"
-                      onClick={() => setShowForgotPassword(true)}
+                      onClick={() => {
+                        setShowForgotPassword(true);
+                        setuserUHID("");
+                        setuserPassword("");
+                      }}
                     >
                       Forgot Password
                     </p>
@@ -257,7 +237,7 @@ const page = ({ isOpen, onClose, userDatasend }) => {
                   <div className="w-full flex flex-row justify-center items-center">
                     <button
                       type="submit"
-                      className="font-semibold rounded-full px-3 py-[1px] text-center text-white text-sm border-[#005585] border-2"
+                      className="font-semibold cursor-pointer rounded-full px-3 py-[1px] text-center text-white text-sm border-[#005585] border-2"
                       style={{ backgroundColor: "rgba(0, 85, 133, 0.9)" }}
                     >
                       LOGIN
@@ -267,63 +247,6 @@ const page = ({ isOpen, onClose, userDatasend }) => {
               )}
 
               {/* Forgot Password Mode */}
-              {showForgotPassword && (
-                <>
-                  {/* Common Heading */}
-                  <div
-                    className={`w-full flex gap-4 justify-start items-center ${
-                      width < 530
-                        ? "flex-col justify-center items-center"
-                        : "flex-row"
-                    }`}
-                  >
-                    <p className="font-bold text-5 text-black">ENTER UHID</p>
-                  </div>
-
-                  {/* Common Input */}
-                  <div className="w-full flex flex-col gap-2">
-                    <input
-                      placeholder="UHID"
-                      rows={3}
-                      className="w-full text-black px-4 py-2 text-sm rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      style={{ backgroundColor: "rgba(71, 84, 103, 0.1)" }}
-                      value={userUHID}
-                      onChange={(e) => setuserUHID(e.target.value)}
-                    />
-                  </div>
-                  <div className="w-full flex flex-col gap-3">
-                    <p className="text-black font-semibold">
-                      Enter your registered Email
-                    </p>
-                    <input
-                      type="text"
-                      placeholder="Registered Email"
-                      className="w-full text-black px-4 py-2 text-sm rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      style={{ backgroundColor: "rgba(71, 84, 103, 0.1)" }}
-                      value={resetEmail}
-                      onChange={(e) => setResetEmail(e.target.value)}
-                    />
-
-                    <div className="flex flex-row justify-center items-center gap-4">
-                      <button
-                        className="bg-[#005585] text-white px-4 py-2 rounded-md mt-2 cursor-pointer"
-                        onClick={handleForgotPassword}
-                      >
-                        Send Reset Link
-                      </button>
-                      <button
-                        className="text-[#005585] underline text-sm cursor-pointer"
-                        onClick={() => {
-                          setShowForgotPassword(false);
-                          setResetEmail("");
-                        }}
-                      >
-                        Back to Login
-                      </button>
-                    </div>
-                  </div>
-                </>
-              )}
 
               {/* Alert */}
               {showAlert && (
