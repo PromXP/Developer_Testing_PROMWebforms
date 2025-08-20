@@ -179,72 +179,81 @@ export default function Home() {
     }
   };
 
-useEffect(() => {
-  const tempData = [];
-  const today = new Date();
+  const [filterStatus, setFilterStatus] = useState("Pending");
 
-  const processSide = (assignedList, surgeryDateStr, sideLabel) => {
-    const surgeryDate = surgeryDateStr;
-    const enriched = assignedList.map((q) => ({
-      ...q,
-      surgery_date: surgeryDate,
-    }));
+  useEffect(() => {
+    const tempData = [];
+    const today = new Date();
 
-    const live = [];
-    const expiredPending = [];
+    const processSide = (assignedList, surgeryDateStr, sideLabel) => {
+      const surgeryDate = surgeryDateStr;
+      const enriched = assignedList.map((q) => ({
+        ...q,
+        surgery_date: surgeryDate,
+      }));
 
-    enriched.forEach((q) => {
-      if (isQuestionnaireVisible(q, today)) {
-        live.push(q);
-      } else {
-        const deadline = new Date(q.deadline);
-        const daysAfterDeadline = (today - deadline) / (1000 * 60 * 60 * 24);
-        if (q.completed === 0 && today > deadline && daysAfterDeadline > 14) {
-          expiredPending.push(q);
-        }
+      if (filterStatus === "Completed") {
+        // ✅ Show ALL completed, sorted by deadline
+        return mapQuestionnaireData(
+          enriched.filter((q) => q.completed === 1),
+          sideLabel
+        ).sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
       }
-    });
-// 1. Sort by deadline descending
-expiredPending.sort((a, b) => new Date(b.deadline) - new Date(a.deadline));
 
-// 2. Get latest deadline date
-const latestDeadline = expiredPending.length > 0 ? expiredPending[0].deadline : null;
+      // ✅ Pending logic (your existing code)
+      const live = [];
+      const expiredPending = [];
 
-// 3. Filter all expired with the latest deadline
-const latestExpired = latestDeadline
-  ? expiredPending.filter(q => q.deadline === latestDeadline)
-  : [];
+      enriched.forEach((q) => {
+        if (isQuestionnaireVisible(q, today)) {
+          live.push(q);
+        } else {
+          const deadline = new Date(q.deadline);
+          const daysAfterDeadline = (today - deadline) / (1000 * 60 * 60 * 24);
+          if (q.completed === 0 && today > deadline && daysAfterDeadline > 14) {
+            expiredPending.push(q);
+          }
+        }
+      });
 
-const combined = [...live, ...latestExpired];
+      expiredPending.sort(
+        (a, b) => new Date(b.deadline) - new Date(a.deadline)
+      );
 
+      const latestDeadline =
+        expiredPending.length > 0 ? expiredPending[0].deadline : null;
 
-    // Attach side and sort final combined data by deadline
-    return mapQuestionnaireData(combined, sideLabel).sort(
-      (a, b) => new Date(a.deadline) - new Date(b.deadline)
-    );
-  };
+      const latestExpired = latestDeadline
+        ? expiredPending.filter((q) => q.deadline === latestDeadline)
+        : [];
 
-  if (userData?.user?.questionnaire_assigned_left) {
-    const leftResult = processSide(
-      userData.user.questionnaire_assigned_left,
-      userData?.user?.post_surgery_details_left?.date_of_surgery,
-      "Left"
-    );
-    tempData.push(...leftResult);
-  }
+      const combined = [...live, ...latestExpired];
 
-  if (userData?.user?.questionnaire_assigned_right) {
-    const rightResult = processSide(
-      userData.user.questionnaire_assigned_right,
-      userData?.user?.post_surgery_details_right?.date_of_surgery,
-      "Right"
-    );
-    tempData.push(...rightResult);
-  }
+      return mapQuestionnaireData(combined, sideLabel).sort(
+        (a, b) => new Date(a.deadline) - new Date(b.deadline)
+      );
+    };
 
-  setTransformedData(tempData);
-}, [userData]);
+    if (userData?.user?.questionnaire_assigned_left) {
+      const leftResult = processSide(
+        userData.user.questionnaire_assigned_left,
+        userData?.user?.post_surgery_details_left?.date_of_surgery,
+        "Left"
+      );
+      tempData.push(...leftResult);
+    }
 
+    if (userData?.user?.questionnaire_assigned_right) {
+      const rightResult = processSide(
+        userData.user.questionnaire_assigned_right,
+        userData?.user?.post_surgery_details_right?.date_of_surgery,
+        "Right"
+      );
+      tempData.push(...rightResult);
+    }
+
+    setTransformedData(tempData);
+  }, [userData, filterStatus]); // <-- also add filterStatus here
 
   const handleUserData = (data) => {
     setUserData(data);
@@ -411,8 +420,6 @@ const combined = [...live, ...latestExpired];
   const handlePerform = () => {
     setPerformshow(!performshow);
   };
-
-  const [filterStatus, setFilterStatus] = useState("Pending");
 
   return (
     <>
