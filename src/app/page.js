@@ -210,7 +210,7 @@ export default function Home() {
         } else {
           const deadline = new Date(q.deadline);
           const daysAfterDeadline = (today - deadline) / (1000 * 60 * 60 * 24);
-          if (q.completed === 0 && today > deadline && daysAfterDeadline > 14) {
+          if (q.completed === 0 && today > deadline) {
             expiredPending.push(q);
           }
         }
@@ -254,6 +254,8 @@ export default function Home() {
 
     setTransformedData(tempData);
   }, [userData, filterStatus]); // <-- also add filterStatus here
+
+
 
   const handleUserData = (data) => {
     setUserData(data);
