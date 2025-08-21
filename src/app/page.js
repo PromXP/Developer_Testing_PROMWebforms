@@ -25,6 +25,7 @@ import CloseIcon from "@/app/assets/closeicon.png";
 import Login from "@/app/Login/page";
 import Firstimepassreset from "@/app/Firsttimepass/page";
 import Terms from "@/app/Terms/page";
+import Rating from "@/app/Rating/page";
 
 import "@/app/globals.css";
 
@@ -119,6 +120,7 @@ export default function Home() {
   const [transformedData, setTransformedData] = useState([]);
 
   const [isOpen, setIsOpen] = useState(true);
+  const [isOpenrating, setIsOpenrating] = useState(false);
 
   const [passopen, setpassopen] = useState(false);
   const [termsopen, setTermsopen] = useState(false);
@@ -255,14 +257,88 @@ export default function Home() {
     setTransformedData(tempData);
   }, [userData, filterStatus]); // <-- also add filterStatus here
 
-
-
   const handleUserData = (data) => {
     setUserData(data);
     setpatientdata(data.user);
   };
 
   const [patientdata, setpatientdata] = useState();
+  const [selectedLegrating, setSelectedLegrating] = useState(null);
+  const [selectedPeriod, setSelectedPeriod] = useState(null);
+
+  useEffect(() => {
+    if (!patientdata) return;
+
+    const user = patientdata;
+
+    const periodsToRate = ["6M", "1Y", "2Y"];
+    const feedbackRatings = user?.feedback_ratings || [];
+    const leftScores = user?.questionnaire_scores_left || [];
+    const rightScores = user?.questionnaire_scores_right || [];
+
+    let selectedLeg = null;
+    let selectedPeriod = null;
+
+    const leftRatingAvailable = periodsToRate.some((period) => {
+      const periodQuestions = leftScores.filter((q) => q.period === period);
+
+      // Remove duplicates based on name + period
+      const uniqueQuestions = Array.from(
+        new Map(
+          periodQuestions.map((q) => [`${q.name}_${q.period}`, q])
+        ).values()
+      );
+
+      const allCompleted = uniqueQuestions.length === 5;
+      const alreadyRated = feedbackRatings.some(
+        (f) => f.period === period && f.leg === "left"
+      );
+
+      if (allCompleted && !alreadyRated) {
+        selectedLeg = "left";
+        selectedPeriod = period;
+        return true;
+      }
+      return false;
+    });
+
+    const rightRatingAvailable = periodsToRate.some((period) => {
+      const periodQuestions = rightScores.filter((q) => q.period === period);
+
+      // Remove duplicates based on name + period
+      const uniqueQuestions = Array.from(
+        new Map(
+          periodQuestions.map((q) => [`${q.name}_${q.period}`, q])
+        ).values()
+      );
+
+      const allCompleted = uniqueQuestions.length === 5;
+      const alreadyRated = feedbackRatings.some(
+        (f) => f.period === period && f.leg === "right"
+      );
+
+      if (allCompleted && !alreadyRated) {
+        selectedLeg = "right";
+        selectedPeriod = period;
+        return true;
+      }
+      return false;
+    });
+
+    // Open rating modal if either left or right needs rating
+    setIsOpenrating(leftRatingAvailable || rightRatingAvailable);
+
+    // Store the leg and period for the Rating component
+    setSelectedLegrating(selectedLeg);
+    setSelectedPeriod(selectedPeriod);
+
+    console.log(
+      "Patient Data inside (JSON):",
+      JSON.stringify({ leftScores, rightScores }, null, 2)
+    );
+
+    setIsOpenrating(leftRatingAvailable || rightRatingAvailable);
+  }, [patientdata]);
 
   useEffect(() => {
     const uhid = sessionStorage.getItem("uhid");
@@ -788,6 +864,7 @@ export default function Home() {
           </div>
         )}
       </div>
+
       <Login
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
@@ -803,6 +880,13 @@ export default function Home() {
           setTermsopen(false);
           setpassopen(true);
         }}
+      />
+
+      <Rating
+        isOpenrating={isOpenrating}
+        onClose={() => setIsOpenrating(false)}
+        selectedLegrating={selectedLegrating} // "left" or "right"
+        selectedPeriod={selectedPeriod} // e.g., "6M", "1Y", "2Y"
       />
     </>
   );
